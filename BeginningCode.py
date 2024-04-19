@@ -4,10 +4,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import wavfile
 
-sample_rate, data = wavfile.read("enter file")
+sample_rate, data = wavfile.read("testTwo.wav")
 spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
 
 
+def debugg(fstring):
+    print(fstring)
+
+
+# select a frequency under 1kHz
 # select a frequency under 1kHz
 def find_target_frequency(freqs):
     for x in freqs:
@@ -15,17 +20,23 @@ def find_target_frequency(freqs):
             break
         return x
 
-
 def frequency_check():
     # identity a frequency to check
     # print(freqs)
     global target_frequency
+
+    debugg(f'freqs {freqs[:10]}')
     target_frequency = find_target_frequency(freqs)
+
     frequency_index = np.where(freqs == target_frequency)[0][0]
+    debugg(f'frequency_index {frequency_index}')
+
     # find sound data for a particular frequency
     frequency_data = spectrum[frequency_index]
+    debugg(f'frequency_data {frequency_data[:10]}')
+
     # change digital signal for a values in decibels
-    data_in_db_fun = 10 * np.log10(frequency_data)
+    data_in_db_fun = 10 * np.log10(frequency_data + 1e-10)
     return data_in_db_fun
 
 
@@ -55,8 +66,9 @@ def find_nearest_value(array, value):
 
 
 max_value_5_less = find_nearest_value(sliced_array, max_value_5_less)
-max_index_5_less = np.where(data_in_db == max_value_5_less)
-plt.plot(t[max_value_5_less], data_in_db[max_value_5_less], 'yo')
+max_index_5_less = np.where(data_in_db == max_value_5_less)[0][0]  # Find index in data_in_db
+plt.plot(t[max_index_5_less], data_in_db[max_index_5_less], 'yo')  # Use index to access elements in t and data_in_db
+
 
 # Slice array from max-5db
 max_value_25_less = max_value - 25
@@ -65,9 +77,9 @@ max_index_25_less = np.where(data_in_db == max_value_25_less)
 plt.plot(t[max_index_25_less], data_in_db[max_index_25_less], 'ro')
 
 rt20 = (t[max_index_5_less] - t[max_index_25_less])[0]
-# Print(f'rt20 = {rt20}')
+print(f'rt20 = {rt20}')
 rt60 = 3 * rt20
-# plt.xlim(0, ((round(abs(rt60), 2)) * 1.5))
+plt.xlim(0, ((round(abs(rt60), 2)) * 1.5))
 plt.grid()
 
 plt.show()
