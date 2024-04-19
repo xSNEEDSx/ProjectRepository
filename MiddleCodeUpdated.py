@@ -21,18 +21,11 @@ def calculate_reverb_time(data, sample_rate):
                 break
             return x
 
-    def debugg(fstring):
-        print(fstring)
-
-    debugg(f'freqs {freqs[:10]}')
     target_frequency = find_target_frequency(freqs)
-
     frequency_index = np.where(freqs == target_frequency)[0][0]
-    debugg(f'frequency_index {frequency_index}')
 
     # find sound data for a particular frequency
     frequency_data = spectrum[frequency_index]
-    debugg(f'frequency_data {frequency_data[:10]}')
 
     # change digital signal for a values in decibels
     data_in_db_fun = 10 * np.log10(frequency_data + 1e-10)
