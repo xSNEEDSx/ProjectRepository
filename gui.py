@@ -1,47 +1,36 @@
-# gui.py
+import tkinter as tk
+from tkinter import filedialog, messagebox
 
-from tkinter import *
-from tkinter import ttk, filedialog
-from primary import *
+class ReverbTimeGUI:  # GUI test
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Reverb Time GUI")
+        self.master.geometry('640x200')
+        self.master.resizable(True, True)
 
+        self.structure = tk.Frame(self.master)
+        self.structure.grid(row=0, column=0, sticky='nesw')
 
-# instance name is 'var'
+        # Button to load file
+        self.load_btn = tk.Button(self.structure, text='Load File', command=self.load_file)
+        self.load_btn.grid(row=0, column=1, sticky='w', padx=5)
 
-# Make sure to file.close() when GUI closes
+        # Display the name of the file selected
+        self.load_field = tk.StringVar()
+        self.load_field.set("Loaded File... ")
+        self.load_field_frame = tk.Entry(self.structure, width=60, textvariable=self.load_field)
+        self.load_field_frame.grid(row=0, column=2, sticky='e', padx=5)
 
-if __name__ == "__main__":  # adds logic
-    _var = Tk()  # Tk class instance
-    _var.title('Great Title')
-    _var.geometry('640x480+300+300')
-    _var.resizable(True, True)
+        # (popup?) state conversion to .wav
 
-    _structure = ttk.Frame(_var, padding= '5 5 5 5 ')
-    _structure.grid(row=0, column=0, sticky='nesw')
+        # Display waveform
 
-    # Button to load file
-    _load_btn = ttk.Button(_structure, text='Load File', command=ReverbTimeGUI.load_file)
-    _load_btn.grid(row=0, column=1, sticky=W, padx=5)
+        # Display frequency of highest resonance (Hz_highest)
 
-    # Display the name of the file selected
-    _load_field = StringVar()
-    _load_field.set("Loaded File... ")
-    _load_field_frame = ttk.Entry(_structure, width= 60, textvariable=_load_field)
-    _load_field_frame.grid(row=0, column=2, sticky=E, padx=5)
+        # Display Low, Med & High plots separately
 
-    # (popup?) state conversion to .wav
+        # (Extra Credit) Button that alternates thru the plots rather than displaying all 3 simultaneously
 
-    # Display waveform
+        # Button to combine the 3 plots into one
 
-    # Display frequency of highest resonance (Hz_highest)
-
-    # Display Low, Med & High plots seperatly
-
-    # (Extra Credit) Button that alternates thru the plots rather than displaying all 3 simultaneously
-
-    # Button to combine the 3 plots into one
-
-    # Button for significant statistics
-
-    _var.mainloop()  # always listening for inputs
-
-
+        # Button for significant statistics
