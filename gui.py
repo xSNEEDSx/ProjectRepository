@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
-class ReverbTimeGUI:  # GUI test
+class ReverbTimeGUI:
     def __init__(self, master):
         self.master = master
         self.master.title("Reverb Time GUI")
@@ -21,7 +21,16 @@ class ReverbTimeGUI:  # GUI test
         self.load_field_frame = tk.Entry(self.structure, width=60, textvariable=self.load_field)
         self.load_field_frame.grid(row=0, column=2, sticky='e', padx=5)
 
-        # (popup?) state conversion to .wav
+        # Display conversion status
+        self.load_conversion_to_wav = tk.StringVar()
+        self.load_conversion_to_wav.set("WAV Conversion: No conversion necessary")
+        self.load_conversion_to_wav_label = tk.Label(self.structure, textvariable=self.load_conversion_to_wav)
+        self.load_conversion_to_wav_label.grid(row=1, column=1, columnspan=2, sticky='w', padx=5)
+
+        self.load_conversion_to_mono = tk.StringVar()
+        self.load_conversion_to_mono.set("Mono Conversion: No conversion necessary")
+        self.load_conversion_to_mono_label = tk.Label(self.structure, textvariable=self.load_conversion_to_mono)
+        self.load_conversion_to_mono_label.grid(row=2, column=1, columnspan=2, sticky='w', padx=5)
 
         # Display waveform
 
