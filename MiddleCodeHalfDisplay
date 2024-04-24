@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import wavfile
 from pydub import AudioSegment
+from pydub.utils import mediainfo
 
 
 # Function for calculating reverb time
@@ -108,6 +109,42 @@ class ReverbTimeGUI:
         self.load_initial_channel_label = tk.Label(self.structure, textvariable=self.load_initial_channel)
         self.load_initial_channel_label.grid(row=2, column=1, columnspan=2, sticky='w', padx=5)
 
+        # Display metadata (duration)
+        self.load_duration = tk.StringVar()
+        self.load_duration.set("Duration: None")
+        self.load_duration_label = tk.Label(self.structure, textvariable=self.load_duration)
+        self.load_duration_label.grid(row=1, column=3, columnspan=2, sticky='w', padx=5)
+
+        # Display metadata (artist)
+        self.load_artist = tk.StringVar()
+        self.load_artist.set("Artist: None")
+        self.load_artist_label = tk.Label(self.structure, textvariable=self.load_artist)
+        self.load_artist_label.grid(row=2, column=3, columnspan=2, sticky='w', padx=5)
+
+        # Display metadata (title)
+        self.load_title = tk.StringVar()
+        self.load_title.set("Title: None")
+        self.load_title_label = tk.Label(self.structure, textvariable=self.load_title)
+        self.load_title_label.grid(row=3, column=3, columnspan=2, sticky='w', padx=5)
+
+        # Display metadata (album)
+        self.load_album = tk.StringVar()
+        self.load_album.set("Album: None")
+        self.load_album_label = tk.Label(self.structure, textvariable=self.load_album)
+        self.load_album_label.grid(row=4, column=3, columnspan=2, sticky='w', padx=5)
+
+        # Display metadata (genre)
+        self.load_genre = tk.StringVar()
+        self.load_genre.set("Genre: None")
+        self.load_genre_label = tk.Label(self.structure, textvariable=self.load_genre)
+        self.load_genre_label.grid(row=5, column=3, columnspan=2, sticky='w', padx=5)
+
+        # Display metadata (date)
+        self.load_year = tk.StringVar()
+        self.load_year.set("Year: None")
+        self.load_year_label = tk.Label(self.structure, textvariable=self.load_year)
+        self.load_year_label.grid(row=6, column=3, columnspan=2, sticky='w', padx=5)
+
         # Display waveform
 
         # Display frequency of highest resonance (Hz_highest)
@@ -184,6 +221,25 @@ class ReverbTimeGUI:
         else:
             self.load_conversion_to_mono.set("Mono Conversion: No conversion necessary")
             self.load_initial_channel.set("Initial Channel Count: 1")
+
+        # Extract metadata using pydub
+        metadata = mediainfo(file_path)
+
+        # Extract relevant metadata fields
+        duration = metadata.get('duration', 'None')
+        artist = metadata.get('artist', 'None')
+        title = metadata.get('title', 'None')
+        album = metadata.get('album', 'None')
+        genre = metadata.get('genre', 'None')
+        year = metadata.get('date', 'None')
+
+        # Display metadata in the GUI
+        self.load_duration.set(f"Duration: {duration} seconds")
+        self.load_artist.set(f"Artist: {artist}")
+        self.load_title.set(f"Title: {title}")
+        self.load_album.set(f"Album: {album}")
+        self.load_genre.set(f"Genre: {genre}")
+        self.load_year.set(f"Year: {year}")
 
     def convert_to_wav(self, file_path):
         # Destination file path for WAV
