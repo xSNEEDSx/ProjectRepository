@@ -21,16 +21,29 @@ class ReverbTimeGUI:
         self.load_field_frame = tk.Entry(self.structure, width=60, textvariable=self.load_field)
         self.load_field_frame.grid(row=0, column=2, sticky='e', padx=5)
 
-        # Display conversion status
+        # Display file conversion status
         self.load_conversion_to_wav = tk.StringVar()
         self.load_conversion_to_wav.set("WAV Conversion: No conversion necessary")
         self.load_conversion_to_wav_label = tk.Label(self.structure, textvariable=self.load_conversion_to_wav)
-        self.load_conversion_to_wav_label.grid(row=1, column=1, columnspan=2, sticky='w', padx=5)
+        self.load_conversion_to_wav_label.grid(row=3, column=1, columnspan=2, sticky='w', padx=5)
 
+        # Display channel conversion status
         self.load_conversion_to_mono = tk.StringVar()
         self.load_conversion_to_mono.set("Mono Conversion: No conversion necessary")
         self.load_conversion_to_mono_label = tk.Label(self.structure, textvariable=self.load_conversion_to_mono)
-        self.load_conversion_to_mono_label.grid(row=2, column=1, columnspan=2, sticky='w', padx=5)
+        self.load_conversion_to_mono_label.grid(row=4, column=1, columnspan=2, sticky='w', padx=5)
+
+        # Display initial file
+        self.load_initial_file = tk.StringVar()
+        self.load_initial_file.set("Initial File: None")
+        self.load_initial_file_label = tk.Label(self.structure, textvariable=self.load_initial_file)
+        self.load_initial_file_label.grid(row=1, column=1, columnspan=2, sticky='w', padx=5)
+
+        # Display initial channel count
+        self.load_initial_channel = tk.StringVar()
+        self.load_initial_channel.set("Initial Channel Count: None")
+        self.load_initial_channel_label = tk.Label(self.structure, textvariable=self.load_initial_channel)
+        self.load_initial_channel_label.grid(row=2, column=1, columnspan=2, sticky='w', padx=5)
 
         # Display waveform
 
@@ -38,8 +51,9 @@ class ReverbTimeGUI:
 
         # Display Low, Med & High plots separately
 
-        # (Extra Credit) Button that alternates thru the plots rather than displaying all 3 simultaneously
+        # (Extra Credit) Button that alternates through the plots rather than displaying all 3 simultaneously
 
         # Button to combine the 3 plots into one
 
         # Button for significant statistics
+        
