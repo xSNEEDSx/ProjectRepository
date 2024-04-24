@@ -1,5 +1,11 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.io import wavfile
+from pydub import AudioSegment
+from pydub.utils import mediainfo
 
 class ReverbTimeGUI:
     def __init__(self, master):
@@ -45,6 +51,42 @@ class ReverbTimeGUI:
         self.load_initial_channel_label = tk.Label(self.structure, textvariable=self.load_initial_channel)
         self.load_initial_channel_label.grid(row=2, column=1, columnspan=2, sticky='w', padx=5)
 
+        # Display metadata (duration)
+        self.load_duration = tk.StringVar()
+        self.load_duration.set("Duration: None")
+        self.load_duration_label = tk.Label(self.structure, textvariable=self.load_duration)
+        self.load_duration_label.grid(row=1, column=3, columnspan=2, sticky='w', padx=5)
+
+        # Display metadata (artist)
+        self.load_artist = tk.StringVar()
+        self.load_artist.set("Artist: None")
+        self.load_artist_label = tk.Label(self.structure, textvariable=self.load_artist)
+        self.load_artist_label.grid(row=2, column=3, columnspan=2, sticky='w', padx=5)
+
+        # Display metadata (title)
+        self.load_title = tk.StringVar()
+        self.load_title.set("Title: None")
+        self.load_title_label = tk.Label(self.structure, textvariable=self.load_title)
+        self.load_title_label.grid(row=3, column=3, columnspan=2, sticky='w', padx=5)
+
+        # Display metadata (album)
+        self.load_album = tk.StringVar()
+        self.load_album.set("Album: None")
+        self.load_album_label = tk.Label(self.structure, textvariable=self.load_album)
+        self.load_album_label.grid(row=4, column=3, columnspan=2, sticky='w', padx=5)
+
+        # Display metadata (genre)
+        self.load_genre = tk.StringVar()
+        self.load_genre.set("Genre: None")
+        self.load_genre_label = tk.Label(self.structure, textvariable=self.load_genre)
+        self.load_genre_label.grid(row=5, column=3, columnspan=2, sticky='w', padx=5)
+
+        # Display metadata (date)
+        self.load_year = tk.StringVar()
+        self.load_year.set("Year: None")
+        self.load_year_label = tk.Label(self.structure, textvariable=self.load_year)
+        self.load_year_label.grid(row=6, column=3, columnspan=2, sticky='w', padx=5)
+
         # Display waveform
 
         # Display frequency of highest resonance (Hz_highest)
@@ -56,4 +98,3 @@ class ReverbTimeGUI:
         # Button to combine the 3 plots into one
 
         # Button for significant statistics
-        
