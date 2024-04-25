@@ -8,6 +8,16 @@ import matplotlib.pyplot as plt
 from scipy.io import wavfile
 from pydub import AudioSegment
 from pydub.utils import mediainfo
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+
+# select a frequency under 1kHz
+def find_target_frequency(freqs):
+    for x in freqs:
+        if x > 1000:
+            break
+        target_freq = x
+    return target_freq  # Return the first frequency under 1kHz
 
 
 # Function for calculating reverb time
@@ -16,15 +26,7 @@ def calculate_reverb_time(data, sample_rate):
     if data.ndim == 1:
         data = np.reshape(data, (-1, 1))
 
-    print("Input data shape:", data.shape)
     spectrum, freqs, t, im = plt.specgram(data[:, 0], Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
-
-    # select a frequency under 1kHz
-    def find_target_frequency(freqs):
-        for x in freqs:
-            if x > 1000:
-                break
-            return x
 
     target_frequency = find_target_frequency(freqs)
     frequency_index = np.where(freqs == target_frequency)[0][0]
@@ -35,8 +37,8 @@ def calculate_reverb_time(data, sample_rate):
     # change digital signal for a values in decibels
     data_in_db_fun = 10 * np.log10(frequency_data + 1e-10)
 
-    # Find index of max value
-    max_index = np.argmax(data_in_db_fun)
+    # Find index of max value excluding the first few bins
+    max_index = np.argmax(np.max(spectrum[10:], axis=1)) + 10  # Exclude the first 10 bins
 
     # Slice our array from max value
     sliced_array = data_in_db_fun[max_index:]
@@ -51,10 +53,70 @@ def calculate_reverb_time(data, sample_rate):
     max_value_25_less = find_nearest_value(sliced_array, max_value_25_less)
     max_index_25_less = np.where(data_in_db_fun == max_value_25_less)[0][0]
 
+    # Find highest resonance frequency excluding 0 Hz
+    highest_resonance_index = np.argmax(spectrum[max_index:]) + max_index
+    if highest_resonance_index < len(freqs):
+        highest_resonance_freq = freqs[highest_resonance_index]
+    else:
+        highest_resonance_freq = 0  # Default value if index is out of bounds
+
     rt20 = t[max_index_5_less] - t[max_index_25_less]
     rt60 = 3 * rt20
 
-    return target_frequency, abs(rt60), t, data_in_db_fun, max_index, max_index_5_less, max_index_25_less
+    return (target_frequency, abs(rt60), highest_resonance_freq, t, data_in_db_fun, max_index, max_index_5_less,
+            max_index_25_less)
+
+
+# Define the new functions for calculating RT60 values for frequency bands
+def calculate_rt60_bands(spectrum, freqs, t):
+    # Define frequency bands
+    low_freq_band = (20, 500)
+    mid_freq_band = (500, 2000)
+    high_freq_band = (2000, 10000)
+
+    # Ensure freqs are at least 1-dimensional
+    freqs = np.atleast_1d(freqs)
+
+    # Find indices corresponding to the frequency bands
+    low_band_indices = np.where((freqs >= low_freq_band[0]) & (freqs <= low_freq_band[1]))[0]
+    mid_band_indices = np.where((freqs >= mid_freq_band[0]) & (freqs <= mid_freq_band[1]))[0]
+    high_band_indices = np.where((freqs >= high_freq_band[0]) & (freqs <= high_freq_band[1]))[0]
+
+    # Calculate RT60 for each frequency band
+    rt60_low = calculate_rt60_for_band(spectrum[low_band_indices], t)
+    rt60_mid = calculate_rt60_for_band(spectrum[mid_band_indices], t)
+    rt60_high = calculate_rt60_for_band(spectrum[high_band_indices], t)
+
+    return rt60_low, rt60_mid, rt60_high
+
+
+def calculate_rt60_for_band(band_spectrum, t):
+    if len(band_spectrum) > 0:
+        # Find the decay time for the band spectrum
+        max_value = np.max(band_spectrum)
+        threshold_5_db = max_value - 5
+        threshold_25_db = max_value - 25
+
+        # Find indices corresponding to the threshold values
+        index_5_db = np.where(band_spectrum >= threshold_5_db)[0]
+        index_25_db = np.where(band_spectrum >= threshold_25_db)[0]
+
+        if len(index_5_db) > 0 and len(index_25_db) > 0:
+            # Get the first occurrence of the thresholds
+            index_5_db = index_5_db[0]
+            index_25_db = index_25_db[0]
+
+            # Calculate RT60 for the band
+            rt20 = t[index_5_db] - t[index_25_db]
+            rt60 = 3 * rt20
+        else:
+            # Handle cases where thresholds are not found
+            rt60 = 0  # Set RT60 to 0 if thresholds are not found
+    else:
+        # Handle cases where the band spectrum is empty
+        rt60 = 0  # Set RT60 to 0 if the band spectrum is empty
+
+    return rt60
 
 
 # Helper function for finding nearest value
@@ -65,16 +127,45 @@ def find_nearest_value(array, value):
 
 
 # GUI Class
-
 class ReverbTimeGUI:
     def __init__(self, master):
         self.master = master
         self.master.title("Reverb Time GUI")
-        self.master.geometry('640x200')
+        self.master.geometry('1600x1200')
         self.master.resizable(True, True)
 
         self.structure = tk.Frame(self.master)
-        self.structure.grid(row=0, column=0, sticky='nesw')
+        self.structure.grid(row=0, column=0, sticky='news')
+
+        # Create a frame for each plot
+        self.plot_frame = tk.Frame(self.master)
+        self.plot_frame.grid(row=1, column=0, padx=10, pady=10, sticky='news')
+
+        self.rt60_low_plot_frame = tk.Frame(self.master)
+        self.rt60_low_plot_frame.grid(row=1, column=1, padx=10, pady=10, sticky='news')
+
+        self.rt60_mid_plot_frame = tk.Frame(self.master)
+        self.rt60_mid_plot_frame.grid(row=2, column=0, padx=10, pady=10, sticky='news')
+
+        self.rt60_high_plot_frame = tk.Frame(self.master)
+        self.rt60_high_plot_frame.grid(row=2, column=1, padx=10, pady=10, sticky='news')
+
+        self.spectrogram_frame = tk.Frame(self.master)
+        self.spectrogram_frame.grid(row=5, column=0, sticky='news')
+
+        # Create empty plots for RT60 values
+        self.plot_empty(self.rt60_low_plot_frame, title="Low Frequencies")
+        self.plot_empty(self.rt60_mid_plot_frame, title="Mid Frequencies")
+        self.plot_empty(self.rt60_high_plot_frame, title="High Frequencies")
+
+        # Create empty plot for spectrogram
+        self.plot_empty(self.plot_frame, title="Spectrogram")
+
+        # Create a plot canvas for the original plot
+        self.fig, self.ax = plt.subplots(figsize=(6, 4.2))
+        self.plot_canvas = FigureCanvasTkAgg(self.fig, master=self.plot_frame)
+        self.plot_canvas.draw()
+        self.plot_canvas.get_tk_widget().grid(row=0, column=0, sticky='news', padx=10, pady=10)
 
         # Button to load file
         self.load_btn = tk.Button(self.structure, text='Load File', command=self.load_file)
@@ -146,17 +237,59 @@ class ReverbTimeGUI:
         self.load_year_label = tk.Label(self.structure, textvariable=self.load_year)
         self.load_year_label.grid(row=6, column=3, columnspan=2, sticky='w', padx=5)
 
-        # Display waveform
-
-        # Display frequency of highest resonance (Hz_highest)
-
-        # Display Low, Med & High plots separately
+        # Display frequency of highest resonance
+        self.hz_highest = tk.StringVar()
+        self.hz_highest.set("Frequency of Highest Resonance: None")
+        self.hz_highest_label = tk.Label(self.structure, textvariable=self.hz_highest)
+        self.hz_highest_label.grid(row=5, column=1, columnspan=2, sticky='w', padx=5)
 
         # (Extra Credit) Button that alternates through the plots rather than displaying all 3 simultaneously
 
         # Button to combine the 3 plots into one
 
         # Button for significant statistics
+
+    # Function to create empty plots using grid
+    def plot_empty(self, plot_frame, title=None):
+        fig, ax = plt.subplots(figsize=(6, 4.2))
+        if title:
+            ax.set_title(title)
+        ax.set_xlabel("X Label")
+        ax.set_ylabel("Y Label")
+        ax.grid()
+
+        # Embed the plot in the plot_frame
+        plot_canvas = FigureCanvasTkAgg(fig, master=plot_frame)
+        plot_canvas.draw()
+        plot_canvas.get_tk_widget().grid(row=0, column=0, sticky='news', padx=10, pady=10)
+
+    def plot(self, plot_frame, data=None, sample_rate=None, t=None, data_in_db_fun=None, rt60_value=None, title=None):
+        fig, ax = plt.subplots(figsize=(6, 4.2))
+        if data is not None and sample_rate is not None and t is not None and data_in_db_fun is not None:
+            ax.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
+            ax.set_xlabel('Time (s)')
+            ax.set_ylabel('Frequency (Hz)')
+        elif rt60_value is not None:
+            frequency_bands = ['Low', 'Mid', 'High']
+            ax.plot(frequency_bands, rt60_value)
+            ax.set_xlabel('Frequency Band')
+            ax.set_ylabel('RT60 (seconds)')
+        else:
+            ax.set_xlabel("X Label")
+            ax.set_ylabel("Y Label")
+        if title is None:
+            title = "Plot"
+        ax.set_title(title)  # Set the title inside the conditional blocks
+        ax.grid()
+
+        # Clear previous plot
+        for widget in plot_frame.winfo_children():
+            widget.destroy()
+
+        # Embed the plot in the plot_frame using grid layout
+        plot_canvas = FigureCanvasTkAgg(fig, master=plot_frame)
+        plot_canvas.draw()
+        plot_canvas.get_tk_widget().grid(row=0, column=0, sticky='news', padx=10, pady=10)
 
     def load_file(self):
         file_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select File", filetypes=(("WAV files",
@@ -196,24 +329,20 @@ class ReverbTimeGUI:
             data = np.mean(data, axis=1)
 
         # Calculate reverb time using the data
-        target_frequency, rt60, t, data_in_db_fun, max_index, max_index_5_less, max_index_25_less = calculate_reverb_time(
-            data, sample_rate)
+        (target_frequency, rt60, highest_resonance_freq, t, data_in_db_fun, max_index, max_index_5_less,
+         max_index_25_less) = calculate_reverb_time(data, sample_rate)
 
-        # Plot the spectrogram and points of interest
-        plt.figure()
-        plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
-        plt.plot(t, data_in_db_fun, linewidth=1, alpha=0.7, color='#004bc6')
-        plt.plot(t[max_index], data_in_db_fun[max_index], 'go')
-        plt.plot(t[max_index_5_less], data_in_db_fun[max_index_5_less], 'yo')
-        plt.plot(t[max_index_25_less], data_in_db_fun[max_index_25_less], 'ro')
-        plt.xlabel('Time (s)')
-        plt.ylabel('Power (dB)')
-        plt.grid()
-        plt.show()
-
-        # Display the RT60 value
-        messagebox.showinfo("Reverb Time",
-                            f"The RT60 reverb time at freq {int(target_frequency)} Hz is {round(rt60, 2)} seconds")
+        # Plot the spectrogram
+        self.ax.clear()
+        self.ax.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
+        self.ax.plot(t, data_in_db_fun, linewidth=1, alpha=0.7, color='#004bc6')
+        self.ax.plot(t[max_index], data_in_db_fun[max_index], 'go')
+        self.ax.plot(t[max_index_5_less], data_in_db_fun[max_index_5_less], 'yo')
+        self.ax.plot(t[max_index_25_less], data_in_db_fun[max_index_25_less], 'ro')
+        self.ax.set_xlabel('Time (s)')
+        self.ax.set_ylabel('Power (dB)')
+        self.ax.grid()
+        self.plot_canvas.draw()
 
         # Update conversion status for stereo to mono
         if convert_to_mono:
@@ -242,6 +371,28 @@ class ReverbTimeGUI:
         self.load_genre.set(f"Genre: {genre}")
         self.load_year.set(f"Year: {year}")
 
+        # Display frequency of highest resonance
+        self.hz_highest.set(f"Frequency of Highest Resonance: {highest_resonance_freq:.2f} Hz")
+
+        # Calculate RT60 values for low, mid, and high frequency bands
+        rt60_low, rt60_mid, rt60_high = calculate_rt60_bands(data, sample_rate, t)
+
+        # Update the plot for the spectrogram
+        self.plot(self.plot_frame, data, sample_rate, t, data_in_db_fun, title="Spectrogram")
+
+        # Update the plot for RT60 value of low-frequencies
+        self.plot(self.rt60_low_plot_frame, rt60_low, title="Low Frequencies RT60")
+
+        # Update the plot for RT60 value of mid-frequencies
+        self.plot(self.rt60_mid_plot_frame, rt60_mid, title="Mid Frequencies RT60")
+
+        # Update the plot for RT60 value of high-frequencies
+        self.plot(self.rt60_high_plot_frame, rt60_high, title="High Frequencies RT60")
+
+        # Display the RT60 value
+        messagebox.showinfo("Reverb Time",
+                            f"The RT60 reverb time at freq {int(target_frequency)} Hz is {round(rt60, 2)} seconds")
+
     def convert_to_wav(self, file_path):
         # Destination file path for WAV
         print("Converting", file_path, "to WAV...")
@@ -265,30 +416,6 @@ class ReverbTimeGUI:
             return destination, sound.channels == 2
         else:
             return None, None
-
-    def convert_to_mono(self, file_path):
-        # Load the audio file
-        sound = AudioSegment.from_file(file_path)
-
-        # Debug: Print out the properties of the AudioSegment object before conversion
-        print("Before conversion - Channels:", sound.channels)
-
-        # Convert stereo to mono if necessary
-        if sound.channels == 2:
-            sound = sound.set_channels(1)
-
-            # Debug: Print out the properties of the AudioSegment object after conversion
-            print("After conversion - Channels:", sound.channels)
-
-            # Destination file path for the converted file
-            destination = os.path.splitext(file_path)[0] + "_mono" + ".wav"
-
-            # Export the audio to WAV format
-            sound.export(destination, format="wav")
-
-            return destination, True
-
-        return file_path, False
 
 
 def main():
