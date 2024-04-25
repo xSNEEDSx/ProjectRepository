@@ -11,11 +11,41 @@ class ReverbTimeGUI:
     def __init__(self, master):
         self.master = master
         self.master.title("Reverb Time GUI")
-        self.master.geometry('640x200')
+        self.master.geometry('1600x1200')
         self.master.resizable(True, True)
 
         self.structure = tk.Frame(self.master)
-        self.structure.grid(row=0, column=0, sticky='nesw')
+        self.structure.grid(row=0, column=0, sticky='news')
+
+        # Create a frame for each plot
+        self.plot_frame = tk.Frame(self.master)
+        self.plot_frame.grid(row=1, column=0, padx=10, pady=10, sticky='news')
+
+        self.rt60_low_plot_frame = tk.Frame(self.master)
+        self.rt60_low_plot_frame.grid(row=1, column=1, padx=10, pady=10, sticky='news')
+
+        self.rt60_mid_plot_frame = tk.Frame(self.master)
+        self.rt60_mid_plot_frame.grid(row=2, column=0, padx=10, pady=10, sticky='news')
+
+        self.rt60_high_plot_frame = tk.Frame(self.master)
+        self.rt60_high_plot_frame.grid(row=2, column=1, padx=10, pady=10, sticky='news')
+
+        self.spectrogram_frame = tk.Frame(self.master)
+        self.spectrogram_frame.grid(row=5, column=0, sticky='news')
+
+        # Create empty plots for RT60 values
+        self.plot_empty(self.rt60_low_plot_frame, title="Low Frequencies")
+        self.plot_empty(self.rt60_mid_plot_frame, title="Mid Frequencies")
+        self.plot_empty(self.rt60_high_plot_frame, title="High Frequencies")
+
+        # Create empty plot for spectrogram
+        self.plot_empty(self.plot_frame, title="Spectrogram")
+
+        # Create a plot canvas for the original plot
+        self.fig, self.ax = plt.subplots(figsize=(6, 4.2))
+        self.plot_canvas = FigureCanvasTkAgg(self.fig, master=self.plot_frame)
+        self.plot_canvas.draw()
+        self.plot_canvas.get_tk_widget().grid(row=0, column=0, sticky='news', padx=10, pady=10)
 
         # Button to load file
         self.load_btn = tk.Button(self.structure, text='Load File', command=self.load_file)
@@ -87,11 +117,11 @@ class ReverbTimeGUI:
         self.load_year_label = tk.Label(self.structure, textvariable=self.load_year)
         self.load_year_label.grid(row=6, column=3, columnspan=2, sticky='w', padx=5)
 
-        # Display waveform
-
-        # Display frequency of highest resonance (Hz_highest)
-
-        # Display Low, Med & High plots separately
+        # Display frequency of highest resonance
+        self.hz_highest = tk.StringVar()
+        self.hz_highest.set("Frequency of Highest Resonance: None")
+        self.hz_highest_label = tk.Label(self.structure, textvariable=self.hz_highest)
+        self.hz_highest_label.grid(row=5, column=1, columnspan=2, sticky='w', padx=5)
 
         # (Extra Credit) Button that alternates through the plots rather than displaying all 3 simultaneously
 
