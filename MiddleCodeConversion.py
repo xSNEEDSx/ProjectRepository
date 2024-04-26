@@ -11,24 +11,6 @@ from pydub.utils import mediainfo
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
-# Function to load frequencies from a file
-def load_frequencies_from_file():
-    """
-    Load frequencies from a file specified by user input.
-
-    Returns:
-    - numpy.ndarray: Array containing the frequencies.
-    """
-    file_path = input("Enter the path to the file containing frequencies: ")
-    try:
-        with open(file_path, 'r') as file:
-            frequencies = [float(line.strip()) for line in file.readlines()]
-        return np.array(frequencies)
-    except Exception as e:
-        print("Error loading frequencies from file:", e)
-        return None
-
-
 # select a frequency under 1kHz
 def find_target_frequency(freqs):
     for x in freqs:
@@ -83,74 +65,6 @@ def calculate_reverb_time(data, sample_rate):
 
     return (target_frequency, abs(rt60), highest_resonance_freq, t, data_in_db_fun, max_index, max_index_5_less,
             max_index_25_less)
-
-
-# Define the new functions for calculating RT60 values for frequency bands
-def calculate_rt60_bands(spectrum, freqs, t):
-    low_freq_band = (20, 1000)  # Define low frequency band
-    mid_freq_band = (1000, 5000)  # Define mid frequency band
-    high_freq_band = (5000, 20000)  # Define high frequency band
-
-    # Step 1: Inspect the input data
-    print("Original frequencies:")
-    print(freqs)
-
-    # Step 2: Define frequency bands
-    print("\nFrequency bands:")
-    print("Low frequency band:", low_freq_band)
-    print("Mid frequency band:", mid_freq_band)
-    print("High frequency band:", high_freq_band)
-
-    # Step 3: Find indices corresponding to the frequency bands
-    freqs = np.atleast_1d(freqs)
-    low_band_indices = np.where((freqs >= low_freq_band[0]) & (freqs <= low_freq_band[1]))[0]
-    mid_band_indices = np.where((freqs >= mid_freq_band[0]) & (freqs <= mid_freq_band[1]))[0]
-    high_band_indices = np.where((freqs >= high_freq_band[0]) & (freqs <= high_freq_band[1]))[0]
-
-    # Step 4: Check output indices
-    print("\nIndices for each frequency band:")
-    print("Low frequency band indices:", low_band_indices)
-    print("Mid frequency band indices:", mid_band_indices)
-    print("High frequency band indices:", high_band_indices)
-
-    # Step 5: Visualize results (optional)
-    # You can plot the frequency spectrum and mark the frequency bands using matplotlib if needed
-
-    # Calculate RT60 for each frequency band
-    rt60_low = calculate_rt60_for_band(spectrum[low_band_indices], t)
-    rt60_mid = calculate_rt60_for_band(spectrum[mid_band_indices], t)
-    rt60_high = calculate_rt60_for_band(spectrum[high_band_indices], t)
-
-    return rt60_low, rt60_mid, rt60_high
-
-
-def calculate_rt60_for_band(band_spectrum, t):
-    if len(band_spectrum) > 0:
-        # Find the decay time for the band spectrum
-        max_value = np.max(band_spectrum)
-        threshold_5_db = max_value - 5
-        threshold_25_db = max_value - 25
-
-        # Find indices corresponding to the threshold values
-        index_5_db = np.where(band_spectrum >= threshold_5_db)[0]
-        index_25_db = np.where(band_spectrum >= threshold_25_db)[0]
-
-        if len(index_5_db) > 0 and len(index_25_db) > 0:
-            # Get the first occurrence of the thresholds
-            index_5_db = index_5_db[0]
-            index_25_db = index_25_db[0]
-
-            # Calculate RT60 for the band
-            rt20 = t[index_5_db] - t[index_25_db]
-            rt60 = 3 * rt20
-        else:
-            # Handle cases where thresholds are not found
-            rt60 = 0  # Set RT60 to 0 if thresholds are not found
-    else:
-        # Handle cases where the band spectrum is empty
-        rt60 = 0  # Set RT60 to 0 if the band spectrum is empty
-
-    return rt60
 
 
 # Helper function for finding nearest value
