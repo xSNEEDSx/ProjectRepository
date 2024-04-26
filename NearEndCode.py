@@ -120,6 +120,12 @@ class ReverbTimeGUI:
         self.rt60_high_plot_frame = tk.Frame(self.scrollable_frame.frame)
         self.rt60_high_plot_frame.grid(row=2, column=1, padx=10, pady=10, sticky='news')
 
+        self.rt60_combined_frame = tk.Frame(self.scrollable_frame.frame)
+        self.rt60_combined_frame.grid(row=3, column=0, padx=10, pady=10, sticky='news')
+
+        self.free_frame = tk.Frame(self.scrollable_frame.frame)
+        self.free_frame.grid(row=3, column=1, padx=10, pady=10, sticky='news')
+
         # Create empty plot for spectrogram
         self.plot_empty(self.plot_frame, title="Spectrogram")
 
@@ -127,6 +133,8 @@ class ReverbTimeGUI:
         self.plot_empty(self.rt60_low_plot_frame, title="Low Frequencies")
         self.plot_empty(self.rt60_mid_plot_frame, title="Mid Frequencies")
         self.plot_empty(self.rt60_high_plot_frame, title="High Frequencies")
+        self.plot_empty(self.rt60_combined_frame, title="Combined Frequencies")
+        self.plot_empty(self.free_frame, title="Free")
 
         # Button to load file
         self.load_btn = tk.Button(self.master, text='Load File', command=self.load_file)
@@ -285,7 +293,6 @@ class ReverbTimeGUI:
         if data.ndim == 2 and data.shape[1] == 2:
             # Convert stereo data to mono
             convert_to_mono = True
-            data = np.mean(data, axis=1)
 
         # Numbers numbers
         sample_rate, data = wavfile.read(file_path)
