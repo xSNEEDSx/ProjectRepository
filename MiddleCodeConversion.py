@@ -128,6 +128,14 @@ class ReverbTimeGUI:
             convert_to_mono = True
             data = np.mean(data, axis=1)
 
+        # Numbers numbers
+        sample_rate, data = wavfile.read(file_path)
+        print(f"number of channels = {data.shape[len(data.shape) - 1]}")
+        print(f'this is data shape {data.shape}')
+        print(f"sample rate = {sample_rate}Hz")
+        length = data.shape[0] / sample_rate
+        print(f"length = {length}s")
+
         # Calculate reverb time using the data
         target_frequency, rt60, t, data_in_db_fun, max_index, max_index_5_less, max_index_25_less = calculate_reverb_time(
             data, sample_rate)
@@ -140,8 +148,17 @@ class ReverbTimeGUI:
         plt.plot(t[max_index_5_less], data_in_db_fun[max_index_5_less], 'yo')
         plt.plot(t[max_index_25_less], data_in_db_fun[max_index_25_less], 'ro')
         plt.xlabel('Time (s)')
-        plt.ylabel('Power (dB)')
+        plt.ylabel('Frequency (Hz)')
         plt.grid()
+        plt.show()
+
+        # Plot the [blank] frequency graph
+
+        time = np.linspace(0., length, data.shape[0])
+        plt.plot(time, data, label="Mono audio")
+        plt.legend()
+        plt.xlabel("Time [s]")
+        plt.ylabel("Amplitude")
         plt.show()
 
         # Display the RT60 value
