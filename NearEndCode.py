@@ -231,7 +231,8 @@ class ReverbTimeGUI:
             ax.set_xlabel('Time (s)')
             ax.set_ylabel('Frequency (Hz)')
         else:
-            ax.plot(data)  # Assuming data is the y-axis values
+            t = np.arange(len(data)) / sample_rate
+            ax.plot(t, data)  # Assuming data is the y-axis values
             ax.set_xlabel("Time [s]")
             ax.set_ylabel("Amplitude")
 
@@ -334,7 +335,7 @@ class ReverbTimeGUI:
         # Plot the [blank] frequency graph
 
         # Update the plot for RT60 value of low-frequencies
-        self.plot(self.rt60_low_plot_frame, data, sample_rate, title="Low Frequencies RT60")
+        self.plot(self.rt60_low_plot_frame, data, sample_rate, t, title="Low Frequencies RT60")
 
         # Display the RT60 value
         messagebox.showinfo("Reverb Time",
