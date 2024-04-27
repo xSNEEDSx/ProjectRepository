@@ -11,7 +11,7 @@ from pydub.utils import mediainfo
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
-# select a frequency under 1kHz
+# select a frequency above 1kHz
 def find_target_frequency(freqs):
     for x in freqs:
         if x > 1000:
@@ -67,63 +67,32 @@ def calculate_reverb_time(data, sample_rate):
             max_index_25_less)
 
 
-# Define the new functions for calculating RT60 values for frequency bands
-def calculate_rt60_bands(spectrum, freqs, t):
-    # Define frequency bands
-    low_freq_band = (20, 500)
-    mid_freq_band = (500, 2000)
-    high_freq_band = (2000, 10000)
-
-    # Ensure freqs are at least 1-dimensional
-    freqs = np.atleast_1d(freqs)
-
-    # Find indices corresponding to the frequency bands
-    low_band_indices = np.where((freqs >= low_freq_band[0]) & (freqs <= low_freq_band[1]))[0]
-    mid_band_indices = np.where((freqs >= mid_freq_band[0]) & (freqs <= mid_freq_band[1]))[0]
-    high_band_indices = np.where((freqs >= high_freq_band[0]) & (freqs <= high_freq_band[1]))[0]
-
-    # Calculate RT60 for each frequency band
-    rt60_low = calculate_rt60_for_band(spectrum[low_band_indices], t)
-    rt60_mid = calculate_rt60_for_band(spectrum[mid_band_indices], t)
-    rt60_high = calculate_rt60_for_band(spectrum[high_band_indices], t)
-
-    return rt60_low, rt60_mid, rt60_high
-
-
-def calculate_rt60_for_band(band_spectrum, t):
-    if len(band_spectrum) > 0:
-        # Find the decay time for the band spectrum
-        max_value = np.max(band_spectrum)
-        threshold_5_db = max_value - 5
-        threshold_25_db = max_value - 25
-
-        # Find indices corresponding to the threshold values
-        index_5_db = np.where(band_spectrum >= threshold_5_db)[0]
-        index_25_db = np.where(band_spectrum >= threshold_25_db)[0]
-
-        if len(index_5_db) > 0 and len(index_25_db) > 0:
-            # Get the first occurrence of the thresholds
-            index_5_db = index_5_db[0]
-            index_25_db = index_25_db[0]
-
-            # Calculate RT60 for the band
-            rt20 = t[index_5_db] - t[index_25_db]
-            rt60 = 3 * rt20
-        else:
-            # Handle cases where thresholds are not found
-            rt60 = 0  # Set RT60 to 0 if thresholds are not found
-    else:
-        # Handle cases where the band spectrum is empty
-        rt60 = 0  # Set RT60 to 0 if the band spectrum is empty
-
-    return rt60
-
-
 # Helper function for finding nearest value
 def find_nearest_value(array, value):
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()
     return array[idx]
+
+
+# Scrolling down the GUI
+class ScrollableFrame(tk.Frame):
+    def __init__(self, master, **kwargs):
+        tk.Frame.__init__(self, master, **kwargs)
+
+        self.canvas = tk.Canvas(self, borderwidth=0, background="#ffffff")
+        self.canvas.grid(row=1, column=0, sticky="news")
+
+        self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.scrollbar.grid(row=1, column=1, sticky="news")
+
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.canvas.bind('<Configure>', self.on_canvas_configure)
+
+        self.frame = tk.Frame(self.canvas, background="#ffffff")
+        self.canvas.create_window((5, 5), window=self.frame, anchor="nw")
+
+    def on_canvas_configure(self, event):
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
 
 # GUI Class
@@ -134,114 +103,106 @@ class ReverbTimeGUI:
         self.master.geometry('1600x1200')
         self.master.resizable(True, True)
 
-        self.structure = tk.Frame(self.master)
-        self.structure.grid(row=0, column=0, sticky='news')
+        self.scrollable_frame = ScrollableFrame(self.master)
+        self.scrollable_frame.grid(row=8, column=0, rowspan=5, columnspan=3, padx=0, pady=0, sticky='news')
+        self.scrollable_frame.canvas.config(width=1250, height=500)
 
         # Create a frame for each plot
-        self.plot_frame = tk.Frame(self.master)
+        self.plot_frame = tk.Frame(self.scrollable_frame.frame)
         self.plot_frame.grid(row=1, column=0, padx=10, pady=10, sticky='news')
 
-        self.rt60_low_plot_frame = tk.Frame(self.master)
+        self.rt60_low_plot_frame = tk.Frame(self.scrollable_frame.frame)
         self.rt60_low_plot_frame.grid(row=1, column=1, padx=10, pady=10, sticky='news')
 
-        self.rt60_mid_plot_frame = tk.Frame(self.master)
+        self.rt60_mid_plot_frame = tk.Frame(self.scrollable_frame.frame)
         self.rt60_mid_plot_frame.grid(row=2, column=0, padx=10, pady=10, sticky='news')
 
-        self.rt60_high_plot_frame = tk.Frame(self.master)
+        self.rt60_high_plot_frame = tk.Frame(self.scrollable_frame.frame)
         self.rt60_high_plot_frame.grid(row=2, column=1, padx=10, pady=10, sticky='news')
 
-        self.spectrogram_frame = tk.Frame(self.master)
-        self.spectrogram_frame.grid(row=5, column=0, sticky='news')
+        # Create empty plot for spectrogram
+        self.plot_empty(self.plot_frame, title="Spectrogram")
 
         # Create empty plots for RT60 values
         self.plot_empty(self.rt60_low_plot_frame, title="Low Frequencies")
         self.plot_empty(self.rt60_mid_plot_frame, title="Mid Frequencies")
         self.plot_empty(self.rt60_high_plot_frame, title="High Frequencies")
 
-        # Create empty plot for spectrogram
-        self.plot_empty(self.plot_frame, title="Spectrogram")
-
-        # Create a plot canvas for the original plot
-        self.fig, self.ax = plt.subplots(figsize=(6, 4.2))
-        self.plot_canvas = FigureCanvasTkAgg(self.fig, master=self.plot_frame)
-        self.plot_canvas.draw()
-        self.plot_canvas.get_tk_widget().grid(row=0, column=0, sticky='news', padx=10, pady=10)
-
         # Button to load file
-        self.load_btn = tk.Button(self.structure, text='Load File', command=self.load_file)
-        self.load_btn.grid(row=0, column=1, sticky='w', padx=5)
+        self.load_btn = tk.Button(self.master, text='Load File', command=self.load_file)
+        self.load_btn.grid(row=0, column=0, sticky='w', padx=5)
 
         # Display the name of the file selected
         self.load_field = tk.StringVar()
         self.load_field.set("Loaded File... ")
-        self.load_field_frame = tk.Entry(self.structure, width=60, textvariable=self.load_field)
-        self.load_field_frame.grid(row=0, column=2, sticky='e', padx=5)
+        self.load_field_frame = tk.Entry(self.master, width=60, textvariable=self.load_field)
+        self.load_field_frame.grid(row=0, column=0, sticky='w', padx=80)
 
         # Display file conversion status
         self.load_conversion_to_wav = tk.StringVar()
         self.load_conversion_to_wav.set("WAV Conversion: No conversion necessary")
-        self.load_conversion_to_wav_label = tk.Label(self.structure, textvariable=self.load_conversion_to_wav)
-        self.load_conversion_to_wav_label.grid(row=3, column=1, columnspan=2, sticky='w', padx=5)
+        self.load_conversion_to_wav_label = tk.Label(self.master, textvariable=self.load_conversion_to_wav)
+        self.load_conversion_to_wav_label.grid(row=3, column=0, columnspan=1, sticky='w', padx=5)
 
         # Display channel conversion status
         self.load_conversion_to_mono = tk.StringVar()
         self.load_conversion_to_mono.set("Mono Conversion: No conversion necessary")
-        self.load_conversion_to_mono_label = tk.Label(self.structure, textvariable=self.load_conversion_to_mono)
-        self.load_conversion_to_mono_label.grid(row=4, column=1, columnspan=2, sticky='w', padx=5)
+        self.load_conversion_to_mono_label = tk.Label(self.master, textvariable=self.load_conversion_to_mono)
+        self.load_conversion_to_mono_label.grid(row=4, column=0, columnspan=1, sticky='w', padx=5)
 
         # Display initial file
         self.load_initial_file = tk.StringVar()
         self.load_initial_file.set("Initial File: None")
-        self.load_initial_file_label = tk.Label(self.structure, textvariable=self.load_initial_file)
-        self.load_initial_file_label.grid(row=1, column=1, columnspan=2, sticky='w', padx=5)
+        self.load_initial_file_label = tk.Label(self.master, textvariable=self.load_initial_file)
+        self.load_initial_file_label.grid(row=1, column=0, columnspan=1, sticky='w', padx=5)
 
         # Display initial channel count
         self.load_initial_channel = tk.StringVar()
         self.load_initial_channel.set("Initial Channel Count: None")
-        self.load_initial_channel_label = tk.Label(self.structure, textvariable=self.load_initial_channel)
-        self.load_initial_channel_label.grid(row=2, column=1, columnspan=2, sticky='w', padx=5)
+        self.load_initial_channel_label = tk.Label(self.master, textvariable=self.load_initial_channel)
+        self.load_initial_channel_label.grid(row=2, column=0, columnspan=1, sticky='w', padx=5)
 
         # Display metadata (duration)
         self.load_duration = tk.StringVar()
         self.load_duration.set("Duration: None")
-        self.load_duration_label = tk.Label(self.structure, textvariable=self.load_duration)
-        self.load_duration_label.grid(row=1, column=3, columnspan=2, sticky='w', padx=5)
+        self.load_duration_label = tk.Label(self.master, textvariable=self.load_duration)
+        self.load_duration_label.grid(row=1, column=1, columnspan=1, sticky='w', padx=5)
 
         # Display metadata (artist)
         self.load_artist = tk.StringVar()
         self.load_artist.set("Artist: None")
-        self.load_artist_label = tk.Label(self.structure, textvariable=self.load_artist)
-        self.load_artist_label.grid(row=2, column=3, columnspan=2, sticky='w', padx=5)
+        self.load_artist_label = tk.Label(self.master, textvariable=self.load_artist)
+        self.load_artist_label.grid(row=2, column=1, columnspan=1, sticky='w', padx=5)
 
         # Display metadata (title)
         self.load_title = tk.StringVar()
         self.load_title.set("Title: None")
-        self.load_title_label = tk.Label(self.structure, textvariable=self.load_title)
-        self.load_title_label.grid(row=3, column=3, columnspan=2, sticky='w', padx=5)
+        self.load_title_label = tk.Label(self.master, textvariable=self.load_title)
+        self.load_title_label.grid(row=3, column=1, columnspan=1, sticky='w', padx=5)
 
         # Display metadata (album)
         self.load_album = tk.StringVar()
         self.load_album.set("Album: None")
-        self.load_album_label = tk.Label(self.structure, textvariable=self.load_album)
-        self.load_album_label.grid(row=4, column=3, columnspan=2, sticky='w', padx=5)
+        self.load_album_label = tk.Label(self.master, textvariable=self.load_album)
+        self.load_album_label.grid(row=4, column=1, columnspan=1, sticky='w', padx=5)
 
         # Display metadata (genre)
         self.load_genre = tk.StringVar()
         self.load_genre.set("Genre: None")
-        self.load_genre_label = tk.Label(self.structure, textvariable=self.load_genre)
-        self.load_genre_label.grid(row=5, column=3, columnspan=2, sticky='w', padx=5)
+        self.load_genre_label = tk.Label(self.master, textvariable=self.load_genre)
+        self.load_genre_label.grid(row=5, column=1, columnspan=1, sticky='w', padx=5)
 
         # Display metadata (date)
         self.load_year = tk.StringVar()
         self.load_year.set("Year: None")
-        self.load_year_label = tk.Label(self.structure, textvariable=self.load_year)
-        self.load_year_label.grid(row=6, column=3, columnspan=2, sticky='w', padx=5)
+        self.load_year_label = tk.Label(self.master, textvariable=self.load_year)
+        self.load_year_label.grid(row=6, column=1, columnspan=1, sticky='w', padx=5)
 
         # Display frequency of highest resonance
         self.hz_highest = tk.StringVar()
         self.hz_highest.set("Frequency of Highest Resonance: None")
-        self.hz_highest_label = tk.Label(self.structure, textvariable=self.hz_highest)
-        self.hz_highest_label.grid(row=5, column=1, columnspan=2, sticky='w', padx=5)
+        self.hz_highest_label = tk.Label(self.master, textvariable=self.hz_highest)
+        self.hz_highest_label.grid(row=5, column=0, columnspan=1, sticky='w', padx=5)
 
         # (Extra Credit) Button that alternates through the plots rather than displaying all 3 simultaneously
 
@@ -263,26 +224,23 @@ class ReverbTimeGUI:
         plot_canvas.draw()
         plot_canvas.get_tk_widget().grid(row=0, column=0, sticky='news', padx=10, pady=10)
 
-    def plot(self, plot_frame, data=None, sample_rate=None, t=None, data_in_db_fun=None, rt60_value=None, title=None):
+    def plot(self, plot_frame, data=None, sample_rate=None, t=None, data_in_db_fun=None, title=None):
         fig, ax = plt.subplots(figsize=(6, 4.2))
         if data is not None and sample_rate is not None and t is not None and data_in_db_fun is not None:
             ax.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
             ax.set_xlabel('Time (s)')
             ax.set_ylabel('Frequency (Hz)')
-        elif rt60_value is not None:
-            frequency_bands = ['Low', 'Mid', 'High']
-            ax.plot(frequency_bands, rt60_value)
-            ax.set_xlabel('Frequency Band')
-            ax.set_ylabel('RT60 (seconds)')
         else:
-            ax.set_xlabel("X Label")
-            ax.set_ylabel("Y Label")
+            ax.plot(data)  # Assuming data is the y-axis values
+            ax.set_xlabel("Time [s]")
+            ax.set_ylabel("Amplitude")
+
         if title is None:
             title = "Plot"
-        ax.set_title(title)  # Set the title inside the conditional blocks
+        ax.set_title(title)
         ax.grid()
 
-        # Clear previous plot
+        # Clear previous plot in the plot_frame
         for widget in plot_frame.winfo_children():
             widget.destroy()
 
@@ -328,21 +286,17 @@ class ReverbTimeGUI:
             convert_to_mono = True
             data = np.mean(data, axis=1)
 
+        # Numbers numbers
+        sample_rate, data = wavfile.read(file_path)
+        print(f"number of channels = {data.shape[len(data.shape) - 1]}")
+        print(f'this is data shape {data.shape}')
+        print(f"sample rate = {sample_rate}Hz")
+        length = data.shape[0] / sample_rate
+        print(f"length = {length}s")
+
         # Calculate reverb time using the data
         (target_frequency, rt60, highest_resonance_freq, t, data_in_db_fun, max_index, max_index_5_less,
          max_index_25_less) = calculate_reverb_time(data, sample_rate)
-
-        # Plot the spectrogram
-        self.ax.clear()
-        self.ax.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
-        self.ax.plot(t, data_in_db_fun, linewidth=1, alpha=0.7, color='#004bc6')
-        self.ax.plot(t[max_index], data_in_db_fun[max_index], 'go')
-        self.ax.plot(t[max_index_5_less], data_in_db_fun[max_index_5_less], 'yo')
-        self.ax.plot(t[max_index_25_less], data_in_db_fun[max_index_25_less], 'ro')
-        self.ax.set_xlabel('Time (s)')
-        self.ax.set_ylabel('Power (dB)')
-        self.ax.grid()
-        self.plot_canvas.draw()
 
         # Update conversion status for stereo to mono
         if convert_to_mono:
@@ -374,20 +328,13 @@ class ReverbTimeGUI:
         # Display frequency of highest resonance
         self.hz_highest.set(f"Frequency of Highest Resonance: {highest_resonance_freq:.2f} Hz")
 
-        # Calculate RT60 values for low, mid, and high frequency bands
-        rt60_low, rt60_mid, rt60_high = calculate_rt60_bands(data, sample_rate, t)
-
         # Update the plot for the spectrogram
         self.plot(self.plot_frame, data, sample_rate, t, data_in_db_fun, title="Spectrogram")
 
+        # Plot the [blank] frequency graph
+
         # Update the plot for RT60 value of low-frequencies
-        self.plot(self.rt60_low_plot_frame, rt60_low, title="Low Frequencies RT60")
-
-        # Update the plot for RT60 value of mid-frequencies
-        self.plot(self.rt60_mid_plot_frame, rt60_mid, title="Mid Frequencies RT60")
-
-        # Update the plot for RT60 value of high-frequencies
-        self.plot(self.rt60_high_plot_frame, rt60_high, title="High Frequencies RT60")
+        self.plot(self.rt60_low_plot_frame, data, sample_rate, title="Low Frequencies RT60")
 
         # Display the RT60 value
         messagebox.showinfo("Reverb Time",
@@ -395,13 +342,21 @@ class ReverbTimeGUI:
 
     def convert_to_wav(self, file_path):
         # Destination file path for WAV
+        print("Converting", file_path, "to WAV...")
         destination = os.path.splitext(file_path)[0] + ".wav"
 
         # Load the audio file
         sound = AudioSegment.from_file(file_path)
 
+        # Debug: Print out the properties of the AudioSegment object before export
+        print("Channels:", sound.channels)
+        print("Sample width (bytes):", sound.sample_width)
+        print("Frame rate (Hz):", sound.frame_rate)
+
         # Export the audio to WAV format
         sound.export(destination, format="wav")
+
+        print("Conversion complete.")
 
         # Check if the destination file exists
         if os.path.exists(destination):
