@@ -75,7 +75,6 @@ def find_nearest_value(array, value):
     return array[idx]
 
 
-
 # Scrolling down the GUI
 class ScrollableFrame(tk.Frame):
     def __init__(self, master, **kwargs):
@@ -110,8 +109,8 @@ class ReverbTimeGUI:
         self.scrollable_frame.canvas.config(width=1250, height=500)
 
         # Create a frame for each plot
-        self.plot_frame = tk.Frame(self.scrollable_frame.frame)
-        self.plot_frame.grid(row=1, column=0, padx=10, pady=10, sticky='news')
+        self.free_frame = tk.Frame(self.scrollable_frame.frame)
+        self.free_frame.grid(row=1, column=0, padx=10, pady=10, sticky='news')
 
         self.rt60_low_plot_frame = tk.Frame(self.scrollable_frame.frame)
         self.rt60_low_plot_frame.grid(row=1, column=1, padx=10, pady=10, sticky='news')
@@ -122,6 +121,12 @@ class ReverbTimeGUI:
         self.rt60_high_plot_frame = tk.Frame(self.scrollable_frame.frame)
         self.rt60_high_plot_frame.grid(row=2, column=1, padx=10, pady=10, sticky='news')
 
+        self.rt60_combined_frame = tk.Frame(self.scrollable_frame.frame)
+        self.rt60_combined_frame.grid(row=3, column=0, padx=10, pady=10, sticky='news')
+
+        self.plot_frame = tk.Frame(self.scrollable_frame.frame)
+        self.plot_frame.grid(row=3, column=1, padx=10, pady=10, sticky='news')
+
         # Frequency change buttons
         self.low_freq_button = tk.Button(self.master, text="Low Frequency", command=lambda: self.update_plots("low"))
         self.low_freq_button.grid(row=0, column=1, padx=(199, 1600), sticky='n')
@@ -130,13 +135,13 @@ class ReverbTimeGUI:
         self.high_freq_button = tk.Button(self.master, text="High Frequency", command=lambda: self.update_plots("high"))
         self.high_freq_button.grid(row=0, column=1, padx=(202, 1200), sticky='n')
 
-        # Create empty plot for spectrogram
-        self.plot_empty(self.plot_frame, title="Spectrogram")
-
         # Create empty plots for RT60 values
+        self.plot_empty(self.free_frame, title="Waveform")
         self.plot_empty(self.rt60_low_plot_frame, title="Low Frequencies")
         self.plot_empty(self.rt60_mid_plot_frame, title="Mid Frequencies")
         self.plot_empty(self.rt60_high_plot_frame, title="High Frequencies")
+        self.plot_empty(self.rt60_combined_frame, title="Combined Frequencies")
+        self.plot_empty(self.plot_frame, title="Spectrogram")
 
         # Button to load file
         self.load_btn = tk.Button(self.master, text='Load File', command=self.load_file)
@@ -341,10 +346,8 @@ class ReverbTimeGUI:
         # Update the plot for the spectrogram
         self.plot(self.plot_frame, data, sample_rate, t, data_in_db_fun, title="Spectrogram")
 
-        # Plot the [blank] frequency graph
-
-        # Update the plot for RT60 value of low-frequencies
-        self.plot(self.rt60_low_plot_frame, data, sample_rate, title="Low Frequencies RT60")
+        # Update the plot for waveform value
+        self.plot(self.free_frame, data, sample_rate, title="Waveform")
 
         # Display the RT60 value
         messagebox.showinfo("Reverb Time",
@@ -375,8 +378,6 @@ class ReverbTimeGUI:
             return None, None
 
 
-
-
 def main():
     root = tk.Tk()
     app = ReverbTimeGUI(root)
@@ -385,3 +386,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
