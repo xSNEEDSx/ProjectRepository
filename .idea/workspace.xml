@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4bd0e23f-7da3-4379-af94-13dc2d389378" name="Changes" comment="Updated README.md to its final form">
+    <list default="true" id="4bd0e23f-7da3-4379-af94-13dc2d389378" name="Changes" comment="HUGE Commit&#10;-Removed dummy .pys that were the prototypes of the current files&#10;-Added Reset.py with the goal of cleaning the previous files and making the RT60 graph function in the GUI">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MiddleCodeHalfDisplay.py" beforeDir="false" afterPath="$PROJECT_DIR$/MiddleCodeHalfDisplay.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/NearEndCode.py" beforeDir="false" afterPath="$PROJECT_DIR$/NearEndCode.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Reset.py" beforeDir="false" afterPath="$PROJECT_DIR$/Reset.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,6 +50,7 @@
     "Python.MiddleCodeDebugless.executor": "Run",
     "Python.MiddleCodeHalfDisplay.executor": "Run",
     "Python.NearEndCode.executor": "Run",
+    "Python.Reset.executor": "Run",
     "Python.scratch.executor": "Run",
     "Python.scratch_1.executor": "Run",
     "Python.testing.executor": "Run",
@@ -64,6 +65,12 @@
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
     "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "Python",
+      "JupyterPython"
+    ]
   }
 }]]></component>
   <component name="RecentsManager">
@@ -85,7 +92,7 @@
       <workItem from="1714140654981" duration="4721000" />
       <workItem from="1714150900267" duration="2380000" />
       <workItem from="1714164041617" duration="5705000" />
-      <workItem from="1714256330363" duration="10204000" />
+      <workItem from="1714256330363" duration="17665000" />
     </task>
     <task id="LOCAL-00001" summary="Using a single channel, we can now plot any single .wav file as a plot of Amplitude vs. Time.&#10;&#10;Also added a handful of terminal outputs for variables related to graphing.">
       <option name="closed" value="true" />
@@ -119,7 +126,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714275031059</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="HUGE Commit&#10;-Removed dummy .pys that were the prototypes of the current files&#10;-Added Reset.py with the goal of cleaning the previous files and making the RT60 graph function in the GUI">
+      <option name="closed" value="true" />
+      <created>1714328009072</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1714328009072</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -141,16 +156,18 @@
     <MESSAGE value="Revising code and cleaning up the methods" />
     <MESSAGE value="Finalized GUI framework" />
     <MESSAGE value="Updated README.md to its final form" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated README.md to its final form" />
+    <MESSAGE value="HUGE Commit&#10;-Removed dummy .pys that were the prototypes of the current files&#10;-Added Reset.py with the goal of cleaning the previous files and making the RT60 graph function in the GUI" />
+    <option name="LAST_COMMIT_MESSAGE" value="HUGE Commit&#10;-Removed dummy .pys that were the prototypes of the current files&#10;-Added Reset.py with the goal of cleaning the previous files and making the RT60 graph function in the GUI" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ProjectRepository$scratch.coverage" NAME="scratch Coverage Results" MODIFIED="1714141261251" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
-    <SUITE FILE_PATH="coverage/ProjectRepository$NearEndCode.coverage" NAME="NearEndCode Coverage Results" MODIFIED="1714323051520" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/ProjectRepository$scratch_1.coverage" NAME="scratch_1 Coverage Results" MODIFIED="1714324255057" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
+    <SUITE FILE_PATH="coverage/ProjectRepository$scratch.coverage" NAME="scratch Coverage Results" MODIFIED="1714333230857" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
+    <SUITE FILE_PATH="coverage/ProjectRepository$scratch_1.coverage" NAME="scratch_1 Coverage Results" MODIFIED="1714327168207" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
+    <SUITE FILE_PATH="coverage/ProjectRepository$NearEndCode.coverage" NAME="NearEndCode Coverage Results" MODIFIED="1714333770076" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ProjectRepository$MiddleCodeDebugless.coverage" NAME="MiddleCodeDebugless Coverage Results" MODIFIED="1714141098276" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ProjectRepository$Reset.coverage" NAME="Reset Coverage Results" MODIFIED="1714332566313" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ProjectRepository$MiddleCodeConversion.coverage" NAME="MiddleCodeConversion Coverage Results" MODIFIED="1714151590183" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ProjectRepository$MiddleCode.coverage" NAME="MiddleCode Coverage Results" MODIFIED="1714141078643" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ProjectRepository$testing.coverage" NAME="testing Coverage Results" MODIFIED="1714141384556" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/ProjectRepository$MiddleCodeHalfDisplay.coverage" NAME="MiddleCodeHalfDisplay Coverage Results" MODIFIED="1714323900577" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ProjectRepository$MiddleCodeHalfDisplay.coverage" NAME="MiddleCodeHalfDisplay Coverage Results" MODIFIED="1714329460954" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

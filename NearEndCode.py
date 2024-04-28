@@ -10,125 +10,6 @@ from pydub import AudioSegment
 from pydub.utils import mediainfo
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-sample_rate, data = wavfile.read('Aula Magna ReverbTest2.wav')
-spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
-
-
-def debugg(fstring):
-    print(fstring)
-
-
-selection = "high"
-
-
-def rt60_threshold(selection):
-    if selection == "low":
-        return 100
-    if selection == "mid":
-        return 1000
-    if selection == "high":
-        return 5000
-
-
-def find_target_frequency(freqs, selection):
-    threshold = rt60_threshold(selection)
-    for x in freqs:
-        if x > threshold:
-            break
-    return x
-
-
-def frequency_check():
-    debugg(f'freqs {freqs[:10]}')
-    target_frequency = find_target_frequency(freqs, selection)
-    debugg(f'target_frequency {target_frequency}')
-    index_of_frequency = np.where(freqs == target_frequency)[0][0]
-    debugg(f'index_of_frequency {index_of_frequency}')
-
-    data_for_frequency = spectrum[index_of_frequency]
-    debugg(f'data_for_frequency {data_for_frequency[:10]}')
-
-    # change a digital signal for a values in decibels
-
-    data_in_db_fun = 10 * np.log10(data_for_frequency)
-    return data_in_db_fun
-
-
-data_in_db = frequency_check()
-plt.figure()
-
-plt.plot(t, data_in_db, linewidth=1, alpha=0.7, color='#004bc6')
-plt.xlabel('Time (s)')
-plt.ylabel('Power (dB')
-
-print("Values of t:", t)
-print("Values of data_in_db:", data_in_db)
-
-index_of_max = np.argmax(data_in_db)
-
-value_of_max = data_in_db[index_of_max]
-
-plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
-
-sliced_array = data_in_db[index_of_max:]
-
-value_of_max_less_5 = value_of_max - 5
-
-# Find highest resonance frequency excluding 0 Hz
-highest_resonance_index = np.argmax(spectrum[index_of_max:]) + index_of_max
-if highest_resonance_index < len(freqs):
-    highest_resonance_freq = freqs[highest_resonance_index]
-else:
-    highest_resonance_freq = 0  # Default value if index is out of bounds
-
-
-def find_nearest_value(array, value):
-    array = np.asarray(array)
-    debugg(f'array {array[:10]}')
-    idx = (np.abs(array - value)).argmin()
-    debugg(f'idx {idx}')
-    debugg(f'array[idx] {array[idx]}')
-    return array[idx]
-
-
-value_of_max_less_5 = find_nearest_value(sliced_array, value_of_max_less_5)
-index_of_max_less_5 = np.where(data_in_db == value_of_max_less_5)
-plt.plot(t[index_of_max_less_5], data_in_db[index_of_max_less_5], 'yo')
-
-value_of_max_less_25 = value_of_max - 25
-value_of_max_less_25 = find_nearest_value(sliced_array, value_of_max_less_25)
-index_of_max_less_25 = np.where(data_in_db == value_of_max_less_25)
-plt.plot(t[index_of_max_less_25], data_in_db[index_of_max_less_25], 'ro')
-
-rt20 = (t[index_of_max_less_5] - t[index_of_max_less_25])[0]
-rt60 = rt20 * 3
-
-plt.grid()
-plt.show()
-
-print(f'The RT60 reverb time is {round(abs(rt60), 2)} seconds')
-
-
-class ScrollableFrame(tk.Frame):
-    def __init__(self, master, **kwargs):
-        tk.Frame.__init__(self, master, **kwargs)
-
-        self.canvas = tk.Canvas(self, borderwidth=0, background="#ffffff")
-        self.canvas.grid(row=1, column=0, sticky="news")
-
-        self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
-        self.scrollbar.grid(row=1, column=1, sticky="news")
-
-        self.canvas.configure(yscrollcommand=self.scrollbar.set)
-        self.canvas.bind('<Configure>', self.on_canvas_configure)
-
-        self.frame = tk.Frame(self.canvas, background="#ffffff")
-        self.canvas.create_window((5, 5), window=self.frame, anchor="nw")
-
-    def on_canvas_configure(self, event):
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
-
-
 # GUI Class
 class ReverbTimeGUI:
     def __init__(self, master):
@@ -137,7 +18,7 @@ class ReverbTimeGUI:
         self.master.geometry('1600x1200')
         self.master.resizable(True, True)
 
-        self.scrollable_frame = ScrollableFrame(self.master)
+        self.scrollable_frame = self.ScrollableFrame(self.master)
         self.scrollable_frame.grid(row=8, column=0, rowspan=5, columnspan=3, padx=0, pady=0, sticky='news')
         self.scrollable_frame.canvas.config(width=1250, height=500)
 
@@ -161,11 +42,11 @@ class ReverbTimeGUI:
         self.plot_frame.grid(row=3, column=1, padx=10, pady=10, sticky='news')
 
         # Frequency change buttons
-        self.low_freq_button = tk.Button(self.master, text="Low Frequency", command=lambda: self.update_plots("low"))
+        self.low_freq_button = tk.Button(self.master, text="Low Frequency", command=lambda: self.update_rt60_plot())
         self.low_freq_button.grid(row=0, column=1, padx=(199, 1600), sticky='n')
-        self.mid_freq_button = tk.Button(self.master, text="Mid Frequency", command=lambda: self.update_plots("mid"))
+        self.mid_freq_button = tk.Button(self.master, text="Mid Frequency", command=lambda: self.update_rt60_plot())
         self.mid_freq_button.grid(row=0, column=1, padx=(198, 1400), sticky='n')
-        self.high_freq_button = tk.Button(self.master, text="High Frequency", command=lambda: self.update_plots("high"))
+        self.high_freq_button = tk.Button(self.master, text="High Frequency", command=lambda: self.update_rt60_plot())
         self.high_freq_button.grid(row=0, column=1, padx=(202, 1200), sticky='n')
 
         # Create empty plot for spectrogram
@@ -254,6 +135,35 @@ class ReverbTimeGUI:
         self.hz_highest_label = tk.Label(self.master, textvariable=self.hz_highest)
         self.hz_highest_label.grid(row=5, column=0, columnspan=1, sticky='w', padx=5)
 
+    def frequency_check(self, selection):
+        # Define the frequency_check method here
+        self.debugg(f'freqs {self.freqs[:10]}')
+        target_frequency = self.find_target_frequency(self.freqs, selection)
+        self.debugg(f'target_frequency {target_frequency}')
+        index_of_frequency = np.where(self.freqs == target_frequency)[0][0]
+        self.debugg(f'index_of_frequency {index_of_frequency}')
+
+        data_for_frequency = self.spectrum[index_of_frequency]
+        self.debugg(f'data_for_frequency {data_for_frequency[:10]}')
+
+        # change a digital signal for a values in decibels
+        data_in_db_fun = 10 * np.log10(data_for_frequency)
+        return data_in_db_fun
+
+    def update_rt60_plot(self):
+
+        self.rt60_threshold("low")
+        low_data_in_db = self.frequency_check("low")
+        self.plot(self.rt60_low_plot_frame, self.t, low_data_in_db, title="Low Frequencies RT60")
+
+        self.rt60_threshold("mid")
+        mid_data_in_db = self.frequency_check("mid")
+        self.plot(self.rt60_mid_plot_frame, self.t, mid_data_in_db, title="Mid Frequencies RT60")
+
+        self.rt60_threshold("high")
+        high_data_in_db = self.frequency_check("high")
+        self.plot(self.rt60_high_plot_frame, self.t, high_data_in_db, title="High Frequencies RT60")
+
         # (Extra Credit) Button that alternates through the plots rather than displaying all 3 simultaneously
 
         # Button to combine the 3 plots into one
@@ -281,11 +191,11 @@ class ReverbTimeGUI:
             ax.set_xlabel('Time (s)')
             ax.set_ylabel('Frequency (Hz)')
         else:
-            ax.plot(t, data_in_db, linewidth=1, alpha=0.7, color='#004bc6')
+            ax.plot(self.time, self.data_in_db, linewidth=1, alpha=0.7, color='#004bc6')
             ax.set_xlabel("Time [s]")
             ax.set_ylabel("Power (dB)")
-            print("Values of t:", t)
-            print("Values of data_in_db:", data_in_db)
+            print("Values of t:", self.time)
+            print("Values of data_in_db:", self.data_in_db)
 
         if title is None:
             title = "Plot"
@@ -300,6 +210,116 @@ class ReverbTimeGUI:
         plot_canvas = FigureCanvasTkAgg(fig, master=plot_frame)
         plot_canvas.draw()
         plot_canvas.get_tk_widget().grid(row=0, column=0, sticky='news', padx=10, pady=10)
+
+    sample_rate, data = wavfile.read('Aula Magna ReverbTest2.wav')
+    spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
+    time = t
+
+    def debugg(self, fstring):
+        print(fstring)
+
+    selection = "mid"
+
+    def rt60_threshold(selection):
+        if selection == "low":
+            return 100
+        if selection == "mid":
+            return 1000
+        if selection == "high":
+            return 5000
+
+    def find_target_frequency(freqs, selection):
+        threshold = ReverbTimeGUI.rt60_threshold(selection)
+        for x in freqs:
+            if x > threshold:
+                break
+        return x
+
+    def frequency_check(self, selection):
+        self.debugg(f'freqs {self.freqs[:10]}')
+        target_frequency = ReverbTimeGUI.find_target_frequency(self.freqs, selection)
+        self.debugg(f'target_frequency {target_frequency}')
+        index_of_frequency = np.where(self.freqs == target_frequency)[0][0]
+        self.debugg(f'index_of_frequency {index_of_frequency}')
+
+        data_for_frequency = self.spectrum[index_of_frequency]
+        self.debugg(f'data_for_frequency {data_for_frequency[:10]}')
+
+        # change a digital signal for a values in decibels
+
+        data_in_db_fun = 10 * np.log10(data_for_frequency)
+        return data_in_db_fun
+
+    data_in_db = self.frequency_check(selection)
+    plt.figure()
+
+    plt.plot(t, data_in_db, linewidth=1, alpha=0.7, color='#004bc6')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Power (dB')
+
+    print("Values of t:", t)
+    print("Values of data_in_db:", data_in_db)
+
+    index_of_max = np.argmax(data_in_db)
+
+    value_of_max = data_in_db[index_of_max]
+
+    plt.plot(t[index_of_max], data_in_db[index_of_max], 'go')
+
+    sliced_array = data_in_db[index_of_max:]
+
+    value_of_max_less_5 = value_of_max - 5
+
+    # Find highest resonance frequency excluding 0 Hz
+    highest_resonance_index = np.argmax(spectrum[index_of_max:]) + index_of_max
+    if highest_resonance_index < len(freqs):
+        highest_resonance_freq = freqs[highest_resonance_index]
+    else:
+        highest_resonance_freq = 0  # Default value if index is out of bounds
+
+    def find_nearest_value(self, array, value):
+        array = np.asarray(array)
+        self.debugg(f'array {array[:10]}')
+        idx = (np.abs(array - value)).argmin()
+        self.debugg(f'idx {idx}')
+        self.debugg(f'array[idx] {array[idx]}')
+        return array[idx]
+
+    value_of_max_less_5 = find_nearest_value(sliced_array, value_of_max_less_5)
+    index_of_max_less_5 = np.where(data_in_db == value_of_max_less_5)
+    plt.plot(t[index_of_max_less_5], data_in_db[index_of_max_less_5], 'yo')
+
+    value_of_max_less_25 = value_of_max - 25
+    value_of_max_less_25 = find_nearest_value(sliced_array, value_of_max_less_25)
+    index_of_max_less_25 = np.where(data_in_db == value_of_max_less_25)
+    plt.plot(t[index_of_max_less_25], data_in_db[index_of_max_less_25], 'ro')
+
+    rt20 = (t[index_of_max_less_5] - t[index_of_max_less_25])[0]
+    rt60 = rt20 * 3
+
+    plt.grid()
+    plt.show()
+
+    print(f'The RT60 reverb time is {round(abs(rt60), 2)} seconds')
+
+    class ScrollableFrame(tk.Frame):
+        def __init__(self, master, **kwargs):
+            tk.Frame.__init__(self, master, **kwargs)
+
+            self.canvas = tk.Canvas(self, borderwidth=0, background="#ffffff")
+            self.canvas.grid(row=1, column=0, sticky="news")
+
+            self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+            self.scrollbar.grid(row=1, column=1, sticky="news")
+
+            self.canvas.configure(yscrollcommand=self.scrollbar.set)
+            self.canvas.bind('<Configure>', self.on_canvas_configure)
+
+            self.frame = tk.Frame(self.canvas, background="#ffffff")
+            self.canvas.create_window((5, 5), window=self.frame, anchor="nw")
+
+        def on_canvas_configure(self, event):
+            self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
     def load_file(self):
         file_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select File", filetypes=(("WAV files",
@@ -369,7 +389,6 @@ class ReverbTimeGUI:
         length = data.shape[0] / sample_rate
         print(f"length = {length}s")
 
-
         # Update conversion status for stereo to mono
         if convert_to_mono:
             self.load_conversion_to_mono.set("Mono Conversion: Stereo converted to mono")
@@ -398,15 +417,17 @@ class ReverbTimeGUI:
         self.load_year.set(f"Year: {year}")
 
         # Display frequency of highest resonance
-        self.hz_highest.set(f"Frequency of Highest Resonance: {highest_resonance_freq:.2f} Hz")
+        self.hz_highest.set(f"Frequency of Highest Resonance: {self.highest_resonance_freq:.2f} Hz")
 
         # Update the plot for the spectrogram
-        self.plot(self.plot_frame, data, sample_rate, t, data_in_db, title="Spectrogram")
+        self.plot(self.plot_frame, data, sample_rate, self.t, self.data_in_db, title="Spectrogram")
 
         # Plot the [blank] frequency graph
 
-        # Update the plot for RT60 value of low-frequencies
-        self.plot(self.rt60_low_plot_frame, t, data_in_db, title="Low Frequencies RT60")
+        # Update the plot for RT60 value frequencies
+        self.plot(self.rt60_low_plot_frame, self.t, self.data_in_db, title="Low Frequencies RT60")
+        self.plot(self.rt60_mid_plot_frame, self.t, self.data_in_db, title="Mid Frequencies RT60")
+        self.plot(self.rt60_high_plot_frame, self.t, self.data_in_db, title="High Frequencies RT60")
 
 
 def main():
