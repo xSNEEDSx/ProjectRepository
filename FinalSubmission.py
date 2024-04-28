@@ -303,11 +303,6 @@ class ReverbTimeGUI:
 
         # Numbers numbers
         sample_rate, data = wavfile.read(file_path)
-        print(f"number of channels = {data.shape[len(data.shape) - 1]}")
-        print(f'this is data shape {data.shape}')
-        print(f"sample rate = {sample_rate}Hz")
-        length = data.shape[0] / sample_rate
-        print(f"length = {length}s")
 
         # Calculate reverb time using the data
         (target_frequency, rt60, highest_resonance_freq, t, data_in_db_fun, max_index, max_index_5_less,
@@ -355,21 +350,13 @@ class ReverbTimeGUI:
 
     def convert_to_wav(self, file_path):
         # Destination file path for WAV
-        print("Converting", file_path, "to WAV...")
         destination = os.path.splitext(file_path)[0] + ".wav"
 
         # Load the audio file
         sound = AudioSegment.from_file(file_path)
 
-        # Debug: Print out the properties of the AudioSegment object before export
-        print("Channels:", sound.channels)
-        print("Sample width (bytes):", sound.sample_width)
-        print("Frame rate (Hz):", sound.frame_rate)
-
         # Export the audio to WAV format
         sound.export(destination, format="wav")
-
-        print("Conversion complete.")
 
         # Check if the destination file exists
         if os.path.exists(destination):
@@ -386,4 +373,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
