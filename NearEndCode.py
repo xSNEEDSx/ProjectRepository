@@ -10,7 +10,7 @@ from pydub import AudioSegment
 from pydub.utils import mediainfo
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-sample_rate, data = wavfile.read('Aula Magna Reverb.wav')
+sample_rate, data = wavfile.read('Aula Magna ReverbTest2.wav')
 spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
 
 

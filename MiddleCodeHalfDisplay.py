@@ -74,6 +74,7 @@ def find_nearest_value(array, value):
     return array[idx]
 
 
+
 # Scrolling down the GUI
 class ScrollableFrame(tk.Frame):
     def __init__(self, master, **kwargs):
@@ -119,6 +120,14 @@ class ReverbTimeGUI:
 
         self.rt60_high_plot_frame = tk.Frame(self.scrollable_frame.frame)
         self.rt60_high_plot_frame.grid(row=2, column=1, padx=10, pady=10, sticky='news')
+
+        # Frequency change buttons
+        self.low_freq_button = tk.Button(self.master, text="Low Frequency", command=lambda: self.update_plots("low"))
+        self.low_freq_button.grid(row=0, column=1, padx=(199, 1600), sticky='n')
+        self.mid_freq_button = tk.Button(self.master, text="Mid Frequency", command=lambda: self.update_plots("mid"))
+        self.mid_freq_button.grid(row=0, column=1, padx=(198, 1400), sticky='n')
+        self.high_freq_button = tk.Button(self.master, text="High Frequency", command=lambda: self.update_plots("high"))
+        self.high_freq_button.grid(row=0, column=1, padx=(202, 1200), sticky='n')
 
         # Create empty plot for spectrogram
         self.plot_empty(self.plot_frame, title="Spectrogram")
@@ -363,6 +372,8 @@ class ReverbTimeGUI:
             return destination, sound.channels == 2
         else:
             return None, None
+
+
 
 
 def main():
