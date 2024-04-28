@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4bd0e23f-7da3-4379-af94-13dc2d389378" name="Changes" comment="Revising code and cleaning up the methods" />
+    <list default="true" id="4bd0e23f-7da3-4379-af94-13dc2d389378" name="Changes" comment="Finalized GUI framework">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/NearEndCode.py" beforeDir="false" afterPath="$PROJECT_DIR$/NearEndCode.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,7 +24,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="plot-addition" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -38,28 +42,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.BeginningCode.executor": "Run",
-    "Python.MiddleCode.executor": "Run",
-    "Python.MiddleCodeConversion.executor": "Run",
-    "Python.MiddleCodeDebugless.executor": "Run",
-    "Python.MiddleCodeHalfDisplay.executor": "Run",
-    "Python.NearEndCode.executor": "Run",
-    "Python.scratch.executor": "Run",
-    "Python.testing.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "plot-addition",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.BeginningCode.executor&quot;: &quot;Run&quot;,
+    &quot;Python.MiddleCode.executor&quot;: &quot;Run&quot;,
+    &quot;Python.MiddleCodeConversion.executor&quot;: &quot;Run&quot;,
+    &quot;Python.MiddleCodeDebugless.executor&quot;: &quot;Run&quot;,
+    &quot;Python.MiddleCodeHalfDisplay.executor&quot;: &quot;Run&quot;,
+    &quot;Python.NearEndCode.executor&quot;: &quot;Run&quot;,
+    &quot;Python.scratch.executor&quot;: &quot;Run&quot;,
+    &quot;Python.testing.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\612Hu\PycharmProjects\ProjectRepository" />
@@ -75,7 +79,8 @@
       <updated>1714140651530</updated>
       <workItem from="1714140654981" duration="4721000" />
       <workItem from="1714150900267" duration="2380000" />
-      <workItem from="1714164041617" duration="5008000" />
+      <workItem from="1714164041617" duration="5705000" />
+      <workItem from="1714256330363" duration="3845000" />
     </task>
     <task id="LOCAL-00001" summary="Using a single channel, we can now plot any single .wav file as a plot of Amplitude vs. Time.&#10;&#10;Also added a handful of terminal outputs for variables related to graphing.">
       <option name="closed" value="true" />
@@ -93,7 +98,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714178227351</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Finalized GUI framework">
+      <option name="closed" value="true" />
+      <created>1714230911392</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1714230911392</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -113,11 +126,12 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Using a single channel, we can now plot any single .wav file as a plot of Amplitude vs. Time.&#10;&#10;Also added a handful of terminal outputs for variables related to graphing." />
     <MESSAGE value="Revising code and cleaning up the methods" />
-    <option name="LAST_COMMIT_MESSAGE" value="Revising code and cleaning up the methods" />
+    <MESSAGE value="Finalized GUI framework" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finalized GUI framework" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ProjectRepository$scratch.coverage" NAME="scratch Coverage Results" MODIFIED="1714141261251" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
-    <SUITE FILE_PATH="coverage/ProjectRepository$NearEndCode.coverage" NAME="NearEndCode Coverage Results" MODIFIED="1714225435135" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ProjectRepository$NearEndCode.coverage" NAME="NearEndCode Coverage Results" MODIFIED="1714271694950" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ProjectRepository$MiddleCodeDebugless.coverage" NAME="MiddleCodeDebugless Coverage Results" MODIFIED="1714141098276" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ProjectRepository$MiddleCodeConversion.coverage" NAME="MiddleCodeConversion Coverage Results" MODIFIED="1714151590183" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ProjectRepository$MiddleCode.coverage" NAME="MiddleCode Coverage Results" MODIFIED="1714141078643" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
