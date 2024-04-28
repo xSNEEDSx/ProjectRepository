@@ -10,15 +10,16 @@ from pydub import AudioSegment
 from pydub.utils import mediainfo
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-sample_rate, data = wavfile.read('Aula Magna ReverbTest2.wav')
+sample_rate, data = wavfile.read('Aula Magna Reverb.wav')
 spectrum, freqs, t, im = plt.specgram(data, Fs=sample_rate, NFFT=1024, cmap=plt.get_cmap('autumn_r'))
+time = t
 
 
 def debugg(fstring):
     print(fstring)
 
 
-selection = "high"
+selection = "mid"
 
 
 def rt60_threshold(selection):
@@ -38,7 +39,7 @@ def find_target_frequency(freqs, selection):
     return x
 
 
-def frequency_check():
+def frequency_check(selection):
     debugg(f'freqs {freqs[:10]}')
     target_frequency = find_target_frequency(freqs, selection)
     debugg(f'target_frequency {target_frequency}')
@@ -54,7 +55,7 @@ def frequency_check():
     return data_in_db_fun
 
 
-data_in_db = frequency_check()
+data_in_db = frequency_check(selection)
 plt.figure()
 
 plt.plot(t, data_in_db, linewidth=1, alpha=0.7, color='#004bc6')
@@ -161,11 +162,11 @@ class ReverbTimeGUI:
         self.plot_frame.grid(row=3, column=1, padx=10, pady=10, sticky='news')
 
         # Frequency change buttons
-        self.low_freq_button = tk.Button(self.master, text="Low Frequency", command=lambda: self.update_plots("low"))
+        self.low_freq_button = tk.Button(self.master, text="Low Frequency", command=lambda: self.update_rt60_plot())
         self.low_freq_button.grid(row=0, column=1, padx=(199, 1600), sticky='n')
-        self.mid_freq_button = tk.Button(self.master, text="Mid Frequency", command=lambda: self.update_plots("mid"))
+        self.mid_freq_button = tk.Button(self.master, text="Mid Frequency", command=lambda: self.update_rt60_plot())
         self.mid_freq_button.grid(row=0, column=1, padx=(198, 1400), sticky='n')
-        self.high_freq_button = tk.Button(self.master, text="High Frequency", command=lambda: self.update_plots("high"))
+        self.high_freq_button = tk.Button(self.master, text="High Frequency", command=lambda: self.update_rt60_plot())
         self.high_freq_button.grid(row=0, column=1, padx=(202, 1200), sticky='n')
 
         # Create empty plot for spectrogram
@@ -254,6 +255,34 @@ class ReverbTimeGUI:
         self.hz_highest_label = tk.Label(self.master, textvariable=self.hz_highest)
         self.hz_highest_label.grid(row=5, column=0, columnspan=1, sticky='w', padx=5)
 
+    def frequency_check(self, selection):
+        # Define the frequency_check method here
+        debugg(f'freqs {freqs[:10]}')
+        target_frequency = find_target_frequency(freqs, selection)
+        debugg(f'target_frequency {target_frequency}')
+        index_of_frequency = np.where(freqs == target_frequency)[0][0]
+        debugg(f'index_of_frequency {index_of_frequency}')
+
+        data_for_frequency = spectrum[index_of_frequency]
+        debugg(f'data_for_frequency {data_for_frequency[:10]}')
+
+        # change a digital signal for a values in decibels
+        data_in_db_fun = 10 * np.log10(data_for_frequency)
+        return data_in_db_fun
+
+    def update_rt60_plot(self):
+        rt60_threshold("low")
+        low_data_in_db = self.frequency_check("low")
+        self.plot(self.rt60_low_plot_frame, t, low_data_in_db, title="Low Frequencies RT60")
+
+        rt60_threshold("mid")
+        mid_data_in_db = self.frequency_check("mid")
+        self.plot(self.rt60_mid_plot_frame, t, mid_data_in_db, title="Mid Frequencies RT60")
+
+        rt60_threshold("high")
+        high_data_in_db = self.frequency_check("high")
+        self.plot(self.rt60_high_plot_frame, t, high_data_in_db, title="High Frequencies RT60")
+
         # (Extra Credit) Button that alternates through the plots rather than displaying all 3 simultaneously
 
         # Button to combine the 3 plots into one
@@ -281,10 +310,10 @@ class ReverbTimeGUI:
             ax.set_xlabel('Time (s)')
             ax.set_ylabel('Frequency (Hz)')
         else:
-            ax.plot(t, data_in_db, linewidth=1, alpha=0.7, color='#004bc6')
+            ax.plot(time, data_in_db, linewidth=1, alpha=0.7, color='#004bc6')
             ax.set_xlabel("Time [s]")
             ax.set_ylabel("Power (dB)")
-            print("Values of t:", t)
+            print("Values of t:", time)
             print("Values of data_in_db:", data_in_db)
 
         if title is None:
@@ -369,7 +398,6 @@ class ReverbTimeGUI:
         length = data.shape[0] / sample_rate
         print(f"length = {length}s")
 
-
         # Update conversion status for stereo to mono
         if convert_to_mono:
             self.load_conversion_to_mono.set("Mono Conversion: Stereo converted to mono")
@@ -405,8 +433,10 @@ class ReverbTimeGUI:
 
         # Plot the [blank] frequency graph
 
-        # Update the plot for RT60 value of low-frequencies
+        # Update the plot for RT60 value frequencies
         self.plot(self.rt60_low_plot_frame, t, data_in_db, title="Low Frequencies RT60")
+        self.plot(self.rt60_mid_plot_frame, t, data_in_db, title="Mid Frequencies RT60")
+        self.plot(self.rt60_high_plot_frame, t, data_in_db, title="High Frequencies RT60")
 
 
 def main():
