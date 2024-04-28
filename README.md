@@ -1,7 +1,7 @@
 # Data Analysis Project
-This project is a tool for analysis of sound that was recorded in a physical space. This sound has reverberation and 
-those reverberations can cause issues with speech regarding intelligibility. When a sound reverberates for too long it
-can induce a reduction in how easy it is to comprehend someones words.
+This project is a tool for analyzing audio files to return numerical data on that audio. This data may be useful to you
+for many different uses. Perhaps you are a student in a lecture hall and you have trouble understanding because their
+words, you can use this tool to evaluate the decay of sound in that hall.
 
 To begin the analysis process, press the load file button and select an audio file (.wav, .mp3, .m4a) from your files. 
 The program will immediately will analyze any file it's given and returns a pop-up for the max resonance. Enjoy a slew

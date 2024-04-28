@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4bd0e23f-7da3-4379-af94-13dc2d389378" name="Changes" comment="Created a scratch file to transfer the waveform function to others computer">
+    <list default="true" id="4bd0e23f-7da3-4379-af94-13dc2d389378" name="Changes" comment="Final Code&#10;Reverting to MiddleCodeHalfDisplay.py to restore a handful of requirements">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sractch.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +44,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.BeginningCode.executor": "Run",
+    "Python.FinalSubmission.executor": "Run",
     "Python.MiddleCode.executor": "Run",
     "Python.MiddleCodeConversion.executor": "Run",
     "Python.MiddleCodeDebugless.executor": "Run",
@@ -92,7 +93,7 @@
       <workItem from="1714140654981" duration="4721000" />
       <workItem from="1714150900267" duration="2380000" />
       <workItem from="1714164041617" duration="5705000" />
-      <workItem from="1714256330363" duration="20318000" />
+      <workItem from="1714256330363" duration="21930000" />
     </task>
     <task id="LOCAL-00001" summary="Using a single channel, we can now plot any single .wav file as a plot of Amplitude vs. Time.&#10;&#10;Also added a handful of terminal outputs for variables related to graphing.">
       <option name="closed" value="true" />
@@ -150,7 +151,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714334333505</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Final Code&#10;Reverting to MiddleCodeHalfDisplay.py to restore a handful of requirements">
+      <option name="closed" value="true" />
+      <created>1714339265843</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1714339265843</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -176,12 +185,14 @@
     <MESSAGE value="HUGE Commit&#10;-Removed dummy .pys that were the prototypes of the current files&#10;-Added Reset.py with the goal of cleaning the previous files and making the RT60 graph function in the GUI" />
     <MESSAGE value="Attempted to resolve issue with selection not updating when a button is pushed to change the RT60 value." />
     <MESSAGE value="Created a scratch file to transfer the waveform function to others computer" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created a scratch file to transfer the waveform function to others computer" />
+    <MESSAGE value="Final Code&#10;Reverting to MiddleCodeHalfDisplay.py to restore a handful of requirements" />
+    <option name="LAST_COMMIT_MESSAGE" value="Final Code&#10;Reverting to MiddleCodeHalfDisplay.py to restore a handful of requirements" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ProjectRepository$scratch.coverage" NAME="scratch Coverage Results" MODIFIED="1714333230857" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
     <SUITE FILE_PATH="coverage/ProjectRepository$scratch_1.coverage" NAME="scratch_1 Coverage Results" MODIFIED="1714327168207" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
     <SUITE FILE_PATH="coverage/ProjectRepository$NearEndCode.coverage" NAME="NearEndCode Coverage Results" MODIFIED="1714338824726" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ProjectRepository$FinalSubmission.coverage" NAME="FinalSubmission Coverage Results" MODIFIED="1714346586878" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ProjectRepository$MiddleCodeDebugless.coverage" NAME="MiddleCodeDebugless Coverage Results" MODIFIED="1714141098276" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ProjectRepository$sractch.coverage" NAME="sractch Coverage Results" MODIFIED="1714334351753" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ProjectRepository$Reset.coverage" NAME="Reset Coverage Results" MODIFIED="1714332566313" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
