@@ -101,8 +101,8 @@ class ReverbTimeGUI:
     def __init__(self, master):
         self.master = master
         self.master.title("Reverb Time GUI")
-        self.master.geometry('1600x1200')
-        self.master.resizable(True, True)
+        self.master.geometry('1280x650')
+        self.master.resizable(False, True)
 
         self.scrollable_frame = ScrollableFrame(self.master)
         self.scrollable_frame.grid(row=8, column=0, rowspan=5, columnspan=3, padx=0, pady=0, sticky='news')
