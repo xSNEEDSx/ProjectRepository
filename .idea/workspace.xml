@@ -4,19 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4bd0e23f-7da3-4379-af94-13dc2d389378" name="Changes" comment="Finalized FinalSubmission.py">
+    <list default="true" id="4bd0e23f-7da3-4379-af94-13dc2d389378" name="Changes" comment="Formalized Packaging">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Aula Magna ReverbTest2.mp3" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Aula Magna ReverbTest2.mp3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Aula Magna ReverbTest2.wav" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Aula Magna ReverbTest2.wav" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Aula Magna ReverbTest3.mp3" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Aula Magna ReverbTest3.mp3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Aula Magna ReverbTest3.wav" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Aula Magna ReverbTest3.wav" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Aula Magna ReverbTest4.mp3" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Aula Magna ReverbTest4.mp3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Aula Magna ReverbTest4.wav" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Aula Magna ReverbTest4.wav" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinalSubmission.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/MVC.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NearEndCode.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Reset.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/testOne.wav" beforeDir="false" afterPath="$PROJECT_DIR$/tests/testOne.wav" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testTwo.wav" beforeDir="false" afterPath="$PROJECT_DIR$/tests/testTwo.wav" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements" beforeDir="false" afterPath="$PROJECT_DIR$/requirements" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +96,7 @@
       <workItem from="1714140654981" duration="4721000" />
       <workItem from="1714150900267" duration="2380000" />
       <workItem from="1714164041617" duration="5705000" />
-      <workItem from="1714256330363" duration="24665000" />
+      <workItem from="1714256330363" duration="26467000" />
     </task>
     <task id="LOCAL-00001" summary="Using a single channel, we can now plot any single .wav file as a plot of Amplitude vs. Time.&#10;&#10;Also added a handful of terminal outputs for variables related to graphing.">
       <option name="closed" value="true" />
@@ -187,7 +178,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714349642922</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Formalized Packaging">
+      <option name="closed" value="true" />
+      <created>1714351208182</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1714351208182</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -216,7 +215,8 @@
     <MESSAGE value="Final Code&#10;Reverting to MiddleCodeHalfDisplay.py to restore a handful of requirements" />
     <MESSAGE value="Finalized README.md" />
     <MESSAGE value="Finalized FinalSubmission.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finalized FinalSubmission.py" />
+    <MESSAGE value="Formalized Packaging" />
+    <option name="LAST_COMMIT_MESSAGE" value="Formalized Packaging" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ProjectRepository$scratch.coverage" NAME="scratch Coverage Results" MODIFIED="1714333230857" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
